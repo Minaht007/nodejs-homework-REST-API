@@ -60,6 +60,7 @@ const verefyEmail = async (body) => {
     verify: true,
     verificationToken: " ",
   });
+  res.json("Email verify success");
 };
 
 async function login(body) {
