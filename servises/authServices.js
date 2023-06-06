@@ -30,18 +30,22 @@ const register = async (body, res) => {
   }
   body.password = await bcrypt.hash(body.password, 10);
   const avatarURL = gravatar.url(email);
-  const veryficationCode = nanoid();
+  const veryficationToken = nanoid();
+
+  const newUser = await User.create({ ...body, avatarURL, veryficationToken });
 
   const verefyEmail = {
     to: email,
     subject: "Verufy email",
-    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${veryficationCode}">
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${veryficationToken}">
         Click verify emaail
       </a>`,
   };
   await sendEmail(verefyEmail);
 
-  return await User.create({ ...body, avatarURL, veryficationCode });
+  return json(newUser.email, avatarURL, verefyEmail);
+
+  // return await User.create({ ...body, avatarURL, veryficationToken });
 
   //   return res.status(201).end();
 };
