@@ -8,7 +8,11 @@ const {
 } = require("../../decorator/authValidationSchema");
 const { singup, userLogin } = require("../../controlers/authControler");
 
-const { logout, patchAvatar } = require("../../servises/authServices");
+const {
+  logout,
+  patchAvatar,
+  verefyEmail,
+} = require("../../servises/authServices");
 
 const authidentify = require("../../decorator/authidentify");
 const validateBody = require("../../decorator/validateBody");
@@ -23,6 +27,8 @@ router.post(
   validateBody(createUserValidasionSchema),
   singup
 );
+router.get("/verify/:verificationToken", verefyEmail);
+
 router.patch("/avatar", upload.single("avatar"), patchAvatar);
 
 router.post(

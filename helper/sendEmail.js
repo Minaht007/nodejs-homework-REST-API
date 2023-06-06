@@ -17,7 +17,7 @@ const metamailerConfig = {
 const transport = nodemailer.createTransport(metamailerConfig);
 
 const email = {
-  to: "men_is_doc@meta.ua",
+  to: "wejidaj156@vaband.com",
   from: "men_is_doc@meta.ua",
   subject: "test email",
   html: "<p><strong>It's a test mail from GoIT school lesson</strong></p>",

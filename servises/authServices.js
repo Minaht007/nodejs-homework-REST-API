@@ -10,7 +10,7 @@ const HttpError = require("../helper/HttpError");
 const gravatar = require("gravatar");
 
 const { nanoid } = require("nanoid");
-const sendEmail = require("../helper/sendEmail");
+const { sendEmail } = require("../helper/sendEmail");
 
 const avatarDir = path.join("__dirname", "../", "public", "avatars");
 
@@ -30,14 +30,14 @@ const register = async (body, res) => {
   }
   body.password = await bcrypt.hash(body.password, 10);
   const avatarURL = gravatar.url(email);
-  const veryficationToken = nanoid();
+  const verificationToken = nanoid();
 
-  const newUser = await User.create({ ...body, avatarURL, veryficationToken });
+  const newUser = await User.create({ ...body, avatarURL, verificationToken });
 
   const verefyEmail = {
     to: email,
     subject: "Verufy email",
-    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${veryficationToken}">
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">
         Click verify emaail
       </a>`,
   };
@@ -50,11 +50,26 @@ const register = async (body, res) => {
   //   return res.status(201).end();
 };
 
+const verefyEmail = async (body) => {
+  const { verificationToken } = req.body;
+  const user = await User.findOne({ verificationToken });
+  if (!user) {
+    throw new HttpError(401, "Email not found");
+  }
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: " ",
+  });
+};
+
 async function login(body) {
   const { email, password } = body;
   const user = await User.findOne({ email });
   if (!user) {
     throw new HttpError(401, "User not found");
+  }
+  if (!user.verify) {
+    throw new HttpError(401, "Email is not verify");
   }
 
   const passwordCompara = await bcrypt.compare(body.password, user.password);
@@ -102,4 +117,4 @@ const patchAvatar = async (req, res) => {
   return res.status(200).json({ publicLocation });
 };
 
-module.exports = { register, login, logout, patchAvatar };
+module.exports = { register, login, logout, patchAvatar, verefyEmail };
