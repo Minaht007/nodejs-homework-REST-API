@@ -5,9 +5,12 @@ const fs = require("fs/promises");
 const { User } = require("../models/user");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
 const HttpError = require("../helper/HttpError");
 const gravatar = require("gravatar");
+
+const { nanoid } = require("nanoid");
+const sendEmail = require("../helper/sendEmail");
 
 const avatarDir = path.join("__dirname", "../", "public", "avatars");
 
@@ -27,8 +30,18 @@ const register = async (body, res) => {
   }
   body.password = await bcrypt.hash(body.password, 10);
   const avatarURL = gravatar.url(email);
+  const veryficationCode = nanoid();
 
-  return await User.create({ ...body, avatarURL });
+  const verefyEmail = {
+    to: email,
+    subject: "Verufy email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${veryficationCode}">
+        Click verify emaail
+      </a>`,
+  };
+  await sendEmail(verefyEmail);
+
+  return await User.create({ ...body, avatarURL, veryficationCode });
 
   //   return res.status(201).end();
 };
