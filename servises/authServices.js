@@ -49,9 +49,9 @@ const register = async (body, res) => {
 
   //   return res.status(201).end();
 };
-
+// перевірка email
 const verefyEmail = async (body) => {
-  const { verificationToken } = req.body;
+  const { verificationToken } = body;
   const user = await User.findOne({ verificationToken });
   if (!user) {
     throw new HttpError(401, "Email not found");
@@ -61,6 +61,26 @@ const verefyEmail = async (body) => {
     verificationToken: " ",
   });
   res.json("Email verify success");
+};
+// повторна перевірка email
+const recentVerifiEmail = async (body) => {
+  const { email } = body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new HttpError(404, "User not found");
+  }
+  if (!user.verify) {
+    throw new HttpError(404, "Email alredy verify");
+  }
+  const verefyEmail = {
+    to: email,
+    subject: "Verufy email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${user.verificationToken}">
+        Click verify emaail
+      </a>`,
+  };
+  await sendEmail(verefyEmail);
+  res.json("Verify email send success");
 };
 
 async function login(body) {
@@ -118,4 +138,11 @@ const patchAvatar = async (req, res) => {
   return res.status(200).json({ publicLocation });
 };
 
-module.exports = { register, login, logout, patchAvatar, verefyEmail };
+module.exports = {
+  register,
+  login,
+  logout,
+  patchAvatar,
+  verefyEmail,
+  recentVerifiEmail,
+};
