@@ -11,10 +11,11 @@ const createUserValidasionSchema = Joi.object({
   phone: Joi.string(),
 });
 
-const loginValidationSchema = Joi.object({
-  email: createUserValidasionSchema.extract("email"),
-  password: createUserValidasionSchema.extract("password"),
-});
+// const loginValidationSchema = Joi.object({
+//   email: createUserValidasionSchema.extract("email"),
+//   password: createUserValidasionSchema.extract("password"),
+// });
 
-module.exports = { createUserValidasionSchema, loginValidationSchema };
+module.exports = createUserValidasionSchema;
+
 // .pattern(passwordPattern)
