@@ -1,4 +1,3 @@
-const sgEmail = require("@sendgrid/mail");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
@@ -26,15 +25,3 @@ transport
   .sendMail(email)
   .then(() => console.log("email is send"))
   .catch((error) => console.log(error.message));
-
-// module.exports = sendMail;
-
-// const { SEND_GRID_API_KEY } = process.env;
-
-// sgEmail.setApiKey(SEND_GRID_API_KEY);
-
-// const sendEmail = async (data) => {
-//   const email = { ...data, from: "men_is_doc@meta.ua " };
-//   await sgEmail.send(email);
-//   return true;
-// };
