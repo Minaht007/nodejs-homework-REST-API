@@ -16,5 +16,15 @@ const loginValidationSchema = Joi.object({
   password: createUserValidasionSchema.extract("password"),
 });
 
-module.exports = { createUserValidasionSchema, loginValidationSchema };
+const emailShema = Joi.object({
+  email: Joi.string()
+    .email()
+    .required(),
+});
+
+module.exports = {
+  createUserValidasionSchema,
+  loginValidationSchema,
+  emailShema,
+};
 // .pattern(passwordPattern)

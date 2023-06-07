@@ -63,9 +63,10 @@ const verefyEmail = async (body) => {
   res.json("Email verify success");
 };
 // повторна перевірка email
-const recentVerifiEmail = async (body) => {
-  const { email } = body;
+const recentVerifiEmail = async (req, body) => {
+  const { email } = req.body;
   const user = await User.findOne({ email });
+  console.log(user);
   if (!user) {
     throw new HttpError(404, "User not found");
   }

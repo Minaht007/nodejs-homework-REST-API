@@ -30,7 +30,8 @@ router.post(
   singup
 );
 router.get("/verify/:verificationToken", verefyEmail);
-router.post("/verify", Schema({ emailShema }), recentVerifiEmail);
+router.post("/verify", recentVerifiEmail);
+// Schema.emailShema,
 
 router.patch("/avatar", upload.single("avatar"), patchAvatar);
 
