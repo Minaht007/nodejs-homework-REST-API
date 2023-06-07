@@ -19,13 +19,11 @@ async function resize(publicLocation) {
   image.resize(250, 250).write(publicLocation);
 }
 
-// реєстрація клієнта
 const register = async (body, res) => {
   const { email, password } = body;
 
   const currentUser = await User.findOne({ email: body.email });
   if (currentUser) {
-    // throw new HttpError(409, "User alredy exist");
     return res.status(409).json({ message: "User alredy exist" });
   }
   body.password = await bcrypt.hash(body.password, 10);
@@ -44,12 +42,8 @@ const register = async (body, res) => {
   await sendEmail(verefyEmail);
 
   return json(newUser.email, avatarURL, verefyEmail);
-
-  // return await User.create({ ...body, avatarURL, veryficationToken });
-
-  //   return res.status(201).end();
 };
-// перевірка email
+
 const verefyEmail = async (body) => {
   const { verificationToken } = body;
   const user = await User.findOne({ verificationToken });
@@ -62,7 +56,7 @@ const verefyEmail = async (body) => {
   });
   res.json("Email verify success");
 };
-// повторна перевірка email
+
 const recentVerifiEmail = async (req, body) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -120,22 +114,17 @@ const logout = async (body) => {
   await User.findByIdAndUpdate(_id, { token: "" });
   res.json({ message: "Logout success" });
 };
-// const userLogout = async (req, res, next) => {
-//   await logoutCurrentUser(req.user);
-//   res.status(200).json({ message: "No Content" });
-// };
 
 const patchAvatar = async (req, res) => {
-  // console.log(req.file, req.body);
   const { userId } = req.body;
   const { path: tempLocation, originalname } = req.file;
   const fileName = `${userId}_${originalname}`;
   const publicLocation = path.join(avatarDir, fileName);
   await fs.rename(tempLocation, publicLocation);
   resize(publicLocation);
-  // const avatarURL = path.join("avatars", fileName);
+
   await User.findByIdAndUpdate({ _id: userId }, { avatarURL: publicLocation });
-  // res.status(200).json({ avatarURL });
+
   return res.status(200).json({ publicLocation });
 };
 
